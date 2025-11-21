@@ -7,8 +7,8 @@
 <!-- NAVBAR -->
 <div class="navbar fixed top-0 left-0 w-full flex justify-between items-center px-6 py-3 bg-white shadow z-50">
     <div class="logo font-bold text-[22px]" style="color: #8755b7ff;">Caffinder</div>
-
-
+    
+    
     <div class="navbar-links flex items-center gap-6 text-lg">
         <a href="/" class="hover:text-purple-600">Home</a>
         <span id="themeToggle" class="theme-icon cursor-pointer text-xl">🌙</span>
@@ -20,7 +20,7 @@
 
 <!-- SEARCH FORM SLIM -->
 <form action="/search" 
-      class="mt-8 mb-10 flex items-center gap-3"> <!-- mt-14 jadi mt-8 -->
+      class="mt-8 mb-10 flex items-center gap-3"> 
 
     <input type="text" name="q" value="{{ $q }}" placeholder="Cari cafe di Medan..."
        class="flex-1 border rounded-full px-5 py-2.5
@@ -31,26 +31,52 @@
 
 
     <select name="category"
-            class="border border-gray-300 rounded-full px-4 py-2.5
-                   focus:ring-2 focus:ring-purple-400 focus:outline-none transition">
-        <option value="">Kategori</option>
-        @foreach($categories as $cat)
-            <option value="{{ $cat }}" @selected($cat == $category)>
-                {{ $cat }}
-            </option>
-        @endforeach
-    </select>
+        class="border border-gray-300 rounded-full px-4 py-2.5
+               focus:ring-2 focus:ring-purple-400 focus:outline-none transition">
+    <option value="">Kategori</option>
+
+    @foreach($categories as $cat)
+        <option value="{{ $cat['id'] }}"
+            @selected($cat['id'] == $category)>
+            {{ $cat['name'] }}
+        </option>
+    @endforeach
+</select>
+
 
     <button class="px-6 py-2.5 text-white rounded-full font-medium transition"
         style="background: #8e44ad; hover:bg: #732d91;">
         Cari
     </button>
 
-</form>
+</form> 
+
+
+
 
 <!-- CAFE GRID -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     @foreach($cafes as $cafe)
+    <a href="{{ route('cafes.show', $cafe['id']) }}"
+   class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-hidden hover:shadow-lg transition">
+
+    <img src="{{ $cafe['image'] ?? '/default.jpg' }}"
+         class="w-full h-48 object-cover">
+
+    <div class="p-4">
+        <h3 class="font-semibold text-lg text-black dark:text-white">
+            {{ $cafe['name'] ?? 'Tanpa Nama' }}
+        </h3>
+
+        <p class="text-gray-500 dark:text-gray-400 text-sm">
+            {{ $cafe['address'] ?? 'Alamat tidak tersedia' }}
+        </p>
+
+        <p class="mt-2 text-yellow-600">⭐ {{ $cafe['rating'] ?? '0' }}</p>
+    </div>
+</a>
+
+    <!--
     <a href="{{ route('cafes.show', $cafe['id']) }}"
        class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-hidden hover:shadow-lg transition">
 
@@ -58,15 +84,15 @@
              class="w-full h-48 object-cover">
 
         <div class="p-4">
-            <!-- Judul tetap hitam di light mode, putih di dark mode -->
+            Judul tetap hitam di light mode, putih di dark mode
             <h3 class="font-semibold text-lg text-black dark:text-white">{{ $cafe['name'] }}</h3>
 
-            <!-- Alamat bisa berubah abu-abu di light mode, lebih lembut di dark mode -->
+            Alamat bisa berubah abu-abu di light mode, lebih lembut di dark mode
             <p class="text-gray-500 dark:text-gray-400 text-sm">{{ $cafe['address'] }}</p>
 
             <p class="mt-2 text-yellow-600">⭐ {{ $cafe['rating'] }}</p>
         </div>
-    </a>
+    </a> -->
     @endforeach
 </div>
 
