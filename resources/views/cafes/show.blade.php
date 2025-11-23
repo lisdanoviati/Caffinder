@@ -48,6 +48,7 @@
             <p><b>Alcohol:</b> {{ $cafe['alcohol'] ? 'Ya' : 'Tidak' }}</p>
             <p><b>Kursi Roda:</b> {{ $cafe['wheel'] ? 'Ya' : 'Tidak' }}</p>
             <p><b>Live Music:</b> {{ $cafe['live_music'] ? 'Ya' : 'Tidak' }}</p>
+            <p><b>Pet Friendly:</b> {{ $cafe['pet_friendly'] ? 'Ya' : 'Tidak' }}</p>
 
             {{-- Harga --}}
             <p><b>Harga Min:</b> {{ $cafe['harga_min'] ?? '-' }}</p>
@@ -83,7 +84,7 @@
                 @endforeach
             </div>
         </div>
-        <a href="/" class="text-green-600 mt-6 inline-block">← Kembali</a>
+        <a href="{{ url()->previous() }}" class="text-green-600 mt-6 inline-block">← Kembali</a>
         
     </div>
 </div>
