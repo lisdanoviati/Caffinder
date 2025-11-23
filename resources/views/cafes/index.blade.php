@@ -20,36 +20,47 @@
 
 <!-- SEARCH FORM SLIM -->
 <form action="/search" 
-      class="mt-8 mb-10 flex items-center gap-3"> 
+      class="mt-8 mb-10 flex items-center gap-3">
 
+    <!-- SEARCH BAR (paling besar) -->
     <input type="text" name="q" value="{{ $q }}" placeholder="Cari cafe di Medan..."
-       class="flex-1 border rounded-full px-5 py-2.5
+       class="flex-[3] border rounded-full px-5 py-2.5
               bg-white border-gray-300 text-gray-700 placeholder-gray-400
               focus:outline-none focus:ring-2 focus:ring-purple-400
-              transition duration-200
-              dark:bg-black dark:border-white dark:text-white dark:placeholder-white dark:focus:ring-white">
+              dark:bg-black dark:border-white dark:text-white dark:placeholder-white">
 
-
+    <!-- CATEGORY -->
     <select name="category"
-        class="border border-gray-300 rounded-full px-4 py-2.5
+        class="flex-[1] border border-gray-300 rounded-full px-4 py-2.5
                focus:ring-2 focus:ring-purple-400 focus:outline-none transition">
-    <option value="">Kategori</option>
+        <option value="">Kategori</option>
+        @foreach($categories as $cat)
+            <option value="{{ $cat['id'] }}" @selected($cat['id'] == $category)>
+                {{ $cat['name'] }}
+            </option>
+        @endforeach
+    </select>
 
-    @foreach($categories as $cat)
-        <option value="{{ $cat['id'] }}"
-            @selected($cat['id'] == $category)>
-            {{ $cat['name'] }}
-        </option>
-    @endforeach
-</select>
+    <!-- DISTRICT -->
+    <select name="district"
+        class="flex-[1] border border-gray-300 rounded-full px-4 py-2.5
+               focus:ring-2 focus:ring-purple-400 focus:outline-none transition">
+        <option value="">Zona Kecamatan</option>
+        @foreach($districts as $d)
+            <option value="{{ $d }}" @selected($d == ($filters['district'] ?? ''))>
+                {{ $d }}
+            </option>
+        @endforeach
+    </select>
 
-
+    <!-- BUTTON -->
     <button class="px-6 py-2.5 text-white rounded-full font-medium transition"
-        style="background: #8e44ad; hover:bg: #732d91;">
+        style="background: #8e44ad;">
         Cari
     </button>
+</form>
 
-</form> 
+
 
 
 

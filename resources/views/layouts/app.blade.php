@@ -11,9 +11,6 @@
 
 <body class="bg-gray-50">
     <header class="bg-white shadow-md">
-        <!-- <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-green-600">Caffinder</h1>
-        </div> -->
     </header>
 
     <main class="max-w-6xl mx-auto p-6">
