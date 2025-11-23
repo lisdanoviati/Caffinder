@@ -10,29 +10,38 @@ use Illuminate\Support\Facades\Http;
 class CaffinderController extends Controller
 {
     public function index(Request $request)
-    {
-        $fuseki = new RdfCafeService();
+{
+    $fuseki = new RdfCafeService();
 
-        $search   = $request->q ?? null;
-        $category = $request->category ?? null;
+    $search    = $request->q ?? null;
+    $category  = $request->category ?? null;
+    $district  = $request->district ?? null; // 🔥 tambahan
 
-        // KALAU PAKAI FILTER → query SPARQL search
-        if ($search || $category) {
-            $cafes = $fuseki->searchCafes($search, $category);
-        } 
-        else {
-            $cafes = $fuseki->getCafes();
-        }
+    // ⬇ kumpulkan filter
+    $filters = [
+        'category' => $category,
+        'district' => $district
+    ];
 
-        $categories = $fuseki->getCategories();
-
-        return view('cafes.index', [
-            'cafes'      => $cafes,
-            'categories' => $categories,
-            'q'          => $search,
-            'category'   => $category
-        ]);
+    // Jika ada salah satu filter → pakai searchCafes versi baru (3 filter)
+    if ($search || $category || $district) {
+        $cafes = $fuseki->searchCafes($search, $category, $district);
+    } 
+    else {
+        $cafes = $fuseki->getCafes();
     }
+
+    return view('cafes.index', [
+        'cafes'      => $cafes,
+        'categories' => $fuseki->getCategories(),
+        'districts'  => $fuseki->getDistricts(), // 🔥 tambahan
+        'q'          => $search,
+        'category'   => $category,
+        'district'   => $district,
+        'filters'    => $filters
+    ]);
+}
+
 
    public function show($id)
 {
@@ -52,7 +61,7 @@ class CaffinderController extends Controller
            ?open_jumat ?close_jumat
            ?open_sabtu ?close_sabtu
            ?open_minggu ?close_minggu
-           ?live_music
+           ?live_music ?pet_friendly
     WHERE {
 
         caff:$id a caff:cafe ;
@@ -78,6 +87,7 @@ class CaffinderController extends Controller
             OPTIONAL { ?facNode caff:laptop_friendly ?laptop . }
             OPTIONAL { ?facNode caff:wheel_chair_access ?wheel . }
             OPTIONAL { ?facNode caff:live_music ?live_music . }
+            OPTIONAL { ?facNode caff:pet_friendly ?pet_friendly . }
         }
 
         OPTIONAL {
@@ -153,6 +163,7 @@ class CaffinderController extends Controller
     'laptop'    => filter_var($get('laptop'), FILTER_VALIDATE_BOOLEAN),
     'wheel'     => filter_var($get('wheel'), FILTER_VALIDATE_BOOLEAN),
     'live_music'=> filter_var($get('live_music'), FILTER_VALIDATE_BOOLEAN),
+    'pet_friendly'=> filter_var($get('pet_friendly'), FILTER_VALIDATE_BOOLEAN),
 
     'harga_min' => $get('harga_min'),
     'harga_max' => $get('harga_max'),
@@ -208,7 +219,8 @@ public function nlpSearch(Request $req)
     ];
 
     // Panggil ke service untuk bikin query SPARQL
-    $cafes = app(\App\Services\RdfCafeService::class)->smartSearch($filters, $raw);
+    $cafes = app(\App\Services\RdfCafeService::class)->smartSearchWithDistrict($filters, $keyword);
+
 
     return view('cafes.index', [
         'cafes' => $cafes,

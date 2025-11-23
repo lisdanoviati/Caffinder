@@ -32,7 +32,7 @@ class RdfCafeService
             OPTIONAL { ?cafe caff:rating ?rating . }
         }
         ORDER BY ?name
-        LIMIT 9
+        LIMIT 6
     ';
 
     $response = Http::withBody($query, 'application/sparql-query')
@@ -60,6 +60,7 @@ class RdfCafeService
             'id'       => $id,
             'name'     => $row['name']['value'],
             'address'  => $row['alamat']['value'],
+            'district' => $this->extractDistrict($row['alamat']['value']),
             'image' => $row['fotoUrl']['value'] ?? '/images/default-cafe.jpg',
             'category' => $row['kategoriLabel']['value'] ?? 'Umum',
             'rating'   => $row['rating']['value'] ?? null,
@@ -118,12 +119,12 @@ class RdfCafeService
      * SEARCH (q + category)
      * NOW PAKAI FILTER DI SPARQL → lebih efisien dari filter di Laravel
      */
-    public function searchCafes($keyword, $category = null)
+    public function searchCafes($keyword, $category = null, $district = null)
 {
     $query = "
         PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
 
-        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategori ?rating
+        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategoriLabel ?rating
         WHERE {
             ?cafe a caff:cafe ;
                   caff:nama_cafe ?name ;
@@ -133,23 +134,31 @@ class RdfCafeService
             ?alamatNode caff:nama_alamat ?alamat .
             OPTIONAL { ?fotoNode caff:foto_url ?fotoUrl . }
 
-            OPTIONAL { ?cafe caff:hascategory ?kategori . }
+            OPTIONAL { 
+                ?cafe caff:hascategory ?kategoriNode .
+                OPTIONAL { ?kategoriNode caff:label ?kategoriLabel . }
+            }
+
             OPTIONAL { ?cafe caff:rating ?rating . }
+
+            # Ekstrak kecamatan dari alamat
+            BIND(
+                REPLACE(?alamat, \".*Medan ([A-Za-z]+).*\", \"Medan $1\")
+                AS ?district
+            )
     ";
 
-    // -------------------------------------------------
-    // 🔥 Tambahan filter kategori (TANPA ganggu search)
-    // -------------------------------------------------
-    if (!empty($category)) {
-    $query .= " FILTER(STRAFTER(STR(?kategori), \"#\") = \"$category\") ";
-}
-
-
-    // -------------------------------------------------
-    // 🔍 Searching (biarin tetap seperti versi kamu)
-    // -------------------------------------------------
+    // -------------------- FILTER --------------------
     if (!empty($keyword)) {
-        $query .= " FILTER(CONTAINS(LCASE(?name), LCASE(\"$keyword\"))) ";
+        $query .= " FILTER(CONTAINS(LCASE(?name), LCASE(\"$keyword\"))). ";
+    }
+
+    if (!empty($category)) {
+        $query .= " FILTER(STRAFTER(STR(?kategoriNode), \"#\") = \"$category\"). ";
+    }
+
+    if (!empty($district)) {
+        $query .= " FILTER(CONTAINS(LCASE(?district), LCASE(\"$district\"))). ";
     }
 
     $query .= "}
@@ -174,12 +183,13 @@ class RdfCafeService
         $id = explode('#', $uri)[1];
 
         $cafes[] = [
-            'id'      => $id,
-            'name'    => $row['name']['value'],
-            'address' => $row['alamat']['value'],
-            'image'   => $row['fotoUrl']['value'] ?? null,
-            'category'=> $row['kategori']['value'] ?? null,
-            'rating'  => $row['rating']['value'] ?? null,
+            'id'       => $id,
+            'name'     => $row['name']['value'],
+            'address'  => $row['alamat']['value'],
+            'district' => $row['district']['value'] ?? null,
+            'image'    => $row['fotoUrl']['value'] ?? '/images/default-cafe.jpg',
+            'category' => $row['kategoriLabel']['value'] ?? 'Umum',
+            'rating'   => $row['rating']['value'] ?? null
         ];
     }
 
@@ -187,81 +197,60 @@ class RdfCafeService
 }
 
 
-public function smartSearch($filters, $raw)
+private function extractDistrict($address)
+{
+    // 1️⃣ Cek apakah format alamat mengandung "Kec. xxxx"
+    if (preg_match('/Kec\. ([^,]+)/i', $address, $match)) {
+        return "Medan " . trim($match[1]); 
+    }
+
+    // 2️⃣ Kalau tidak ada "Kec.", baru pakai format "Medan xxxx"
+    if (preg_match('/Medan\s+([A-Za-z]+)/i', $address, $match)) {
+        return "Medan " . trim($match[1]);
+    }
+
+    // 3️⃣ Kalau tidak ketemu dua-duanya
+    return null;
+}
+
+public function getDistricts()
 {
     $query = "
         PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
 
-        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategoriLabel ?rating
+        SELECT DISTINCT ?kecamatanFinal
         WHERE {
             ?cafe a caff:cafe ;
-                  caff:nama_cafe ?name ;
-                  caff:hasaddress ?alamatNode ;
-                  caff:hasphoto ?fotoNode .
+                  caff:hasaddress ?alamatNode .
 
             ?alamatNode caff:nama_alamat ?alamat .
-            OPTIONAL { ?fotoNode caff:foto_url ?fotoUrl . }
-            OPTIONAL { ?cafe caff:rating ?rating . }
-            OPTIONAL { 
-                ?cafe caff:hascategory ?kategoriNode .
-                OPTIONAL { ?kategoriNode caff:label ?kategoriLabel . }
-            }
-    ";
 
-    // === NLP Rules ===
+            # 1️⃣ Jika ada 'Kec. Xxxxx' → ambil Xxxxx saja (tanpa 'Medan')
+            BIND(
+                IF(
+                    REGEX(?alamat, \"Kec\\\\.\"),
+                    REPLACE(?alamat, \".*Kec\\\\. ([^,]+).*\", \"$1\"),
+                    \"\"
+                )
+                AS ?kecFromKec
+            )
 
-    // Filter category (kalau dari NLP)
-    if (!empty($filters['category'])) {
-        $query .= " ?cafe caff:hascategory caff:$filters[category] . ";
-    }
-
-    if (!empty($filters['wifi'])) {
-        $query .= "
-            ?cafe caff:hasfacility ?facNode .
-            ?facNode caff:wifi true .
-        ";
-    }
-
-    if (!empty($filters['murah'])) {
-        $query .= " 
-            ?cafe caff:hasprice ?priceNode .
-            ?priceNode caff:min_price ?min .
-            FILTER(?min < 30000)
-        ";
-    }
-
-    if (!empty($filters['laptop'])) {
-        $query .= "
-            ?cafe caff:hasfacility ?facNode2 .
-            ?facNode2 caff:laptop_friendly true .
-        ";
-    }
-
-    if (!empty($filters['specialty'])) {
-        $query .= " ?cafe caff:hascategory caff:kategori_specialty . ";
-    }
-
-    if (!empty($filters['instagramable'])) {
-        $query .= " ?cafe caff:hascategory caff:kategori_aesthetic . ";
-    }
-
-    // ====================================================
-    // 🆕 Searching nama café bebas TANPA stopwords
-    // ====================================================
-    if (!empty($raw)) {
-        $words = explode(' ', $raw);
-
-        foreach ($words as $word) {
-            $word = trim($word);
-
-            if (strlen($word) > 2) {
-                $query .= " FILTER(CONTAINS(LCASE(?name), LCASE(\"$word\"))) ";
-            }
+            # 2️⃣ Jika tidak ada 'Kec.' → fallback cari 'Medan Yyyyy'
+            BIND(
+                IF(
+                    ?kecFromKec != \"\",
+                    ?kecFromKec,
+                    IF(
+                        REGEX(?alamat, \"Medan [A-Za-z]+\"),
+                        REPLACE(?alamat, \".*Medan ([A-Za-z]+).*\", \"Medan $1\"),
+                        \"\"
+                    )
+                )
+                AS ?kecamatanFinal
+            )
         }
-    }
-
-    // finish query
-    $query .= "} ORDER BY ?name";
+        ORDER BY ?kecamatanFinal
+    ";
 
     $response = Http::withBody($query, 'application/sparql-query')
         ->withHeaders(['Accept' => 'application/sparql-results+json'])
@@ -273,17 +262,100 @@ public function smartSearch($filters, $raw)
         return [];
     }
 
+    $districts = [];
+
+    foreach ($json['results']['bindings'] as $row) {
+        $value = trim($row['kecamatanFinal']['value']);
+        if ($value !== "") {
+            $districts[] = $value;
+        }
+    }
+
+    return array_unique($districts);
+}
+
+
+        
+    public function smartSearchWithDistrict($filters, $keyword)
+{
+    $category = $filters['category'] ?? null;
+    $district = $filters['district'] ?? null;
+
+    $query = "
+        PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
+
+        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategoriLabel ?rating ?district
+        WHERE {
+            ?cafe a caff:cafe ;
+                  caff:nama_cafe ?name ;
+                  caff:hasaddress ?alamatNode ;
+                  caff:hasphoto ?fotoNode .
+
+            ?alamatNode caff:nama_alamat ?alamat .
+            OPTIONAL { ?fotoNode caff:foto_url ?fotoUrl . }
+
+            OPTIONAL { 
+                ?cafe caff:hascategory ?kategoriNode .
+                OPTIONAL { ?kategoriNode caff:label ?kategoriLabel . }
+            }
+
+            OPTIONAL { ?cafe caff:rating ?rating . }
+
+            # Ekstrak Kecamatan dari alamat
+            BIND(
+                REPLACE(?alamat, \".*Medan ([A-Za-z]+).*\", \"Medan $1\")
+                AS ?district
+            )
+    ";
+
+    // ========================= FILTER ==============================
+    if (!empty($keyword)) {
+        $query .= " FILTER(CONTAINS(LCASE(?name), LCASE(\"$keyword\"))). ";
+    }
+
+    if (!empty($category)) {
+        $query .= " FILTER(STRAFTER(STR(?kategoriNode), \"#\") = \"$category\"). ";
+    }
+
+    if (!empty($district)) {
+        $query .= " FILTER(CONTAINS(LCASE(?district), LCASE(\"$district\"))). ";
+    }
+
+    $query .= "}
+        ORDER BY ?name
+    ";
+
+    // ===================== EXEC FUSEKI =============================
+    $response = \Illuminate\Support\Facades\Http::withHeaders([
+        'Content-Type' => 'application/sparql-query',
+        'Accept' => 'application/sparql-results+json'
+    ])
+    ->withBody($query, 'application/sparql-query')
+    ->post('http://localhost:3030/caffinder/sparql');
+
+    if ($response->failed()) {
+        return [];
+    }
+
+    $json = $response->json();
+    if (!isset($json['results']['bindings'])) {
+        return [];
+    }
+
+    // ===================== PARSE HASIL =============================
     $cafes = [];
 
     foreach ($json['results']['bindings'] as $row) {
-        $id = explode('#', $row['cafe']['value'])[1];
+        $uri = $row['cafe']['value'];
+        $id  = explode('#', $uri)[1];
 
         $cafes[] = [
             'id'       => $id,
             'name'     => $row['name']['value'],
             'address'  => $row['alamat']['value'],
-            'image'    => $row['fotoUrl']['value'],
-            'category' => $row['kategoriLabel']['value'] ?? null,
+            'district' => $row['district']['value'] ?? null,
+            'image'    => $row['fotoUrl']['value'] ?? '/images/default.jpg',
+            'category' => $row['kategoriLabel']['value'] ?? 'Umum',
             'rating'   => $row['rating']['value'] ?? null,
         ];
     }
@@ -291,4 +363,4 @@ public function smartSearch($filters, $raw)
     return $cafes;
 }
 
-}
+    }
