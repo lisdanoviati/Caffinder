@@ -23,8 +23,8 @@
 }
 
 .search-box:focus {
-    border-color: #8e44ad;
-    box-shadow: 0 3px 12px rgba(142, 68, 173, 0.2);
+    border-color: #8b5e3c; /* brown */
+    box-shadow: 0 3px 12px rgba(139, 94, 60, 0.2);
 }
 
 /* =====================================
@@ -71,7 +71,7 @@
 }
 
 .cafe-card .rating {
-    background: #f1c40f;
+    background: #c49b75; /* soft latte brown */
     color: #fff;
     padding: 6px 12px;
     border-radius: 6px;
@@ -86,7 +86,7 @@
 
     padding: 10px 15px;
     border-radius: 8px;
-    background: #8e44ad;
+    background: #8b5e3c; /* brown */
     color: white;
     text-decoration: none;
     font-weight: 500;
@@ -94,7 +94,7 @@
 }
 
 .cafe-card .btn-detail:hover {
-    background: #732d91;
+    background: #6e452b; /* darker brown */
 }
 
 /* =====================================
@@ -109,7 +109,7 @@
 
     box-shadow: 0 -2px 6px rgba(0,0,0,0.06);
 
-    margin-top: auto; /* penting supaya footer nempel bawah */
+    margin-top: auto;
     width: 100%;
 }
 
@@ -127,16 +127,16 @@ body.dark .navbar {
 }
 
 body.dark .navbar-links a {
-    color: #ccc;
+    color: #C49B75 !important;
 }
 
 body.dark .navbar-links a:hover {
-    color: #b37ce6;
+    color: #c49b75; /* brown accent */
 }
 
 body.dark .search-box {
     background: #2c2c2c;
-    border-color: #555;
+    border-color: #6e452b; /* dark brown */
     color: #fff;
 }
 
@@ -175,5 +175,5 @@ body.dark .footer {
 }
 
 body.dark .theme-icon {
-    color: #f1c40f; /* kuning sedikit biar keliatan */
+    color: #c49b75; /* soft brown */
 }
