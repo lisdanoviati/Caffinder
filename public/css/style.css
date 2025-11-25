@@ -120,9 +120,16 @@
 /* ================================
    DARK MODE (TIDAK ADA BACKGROUND)
 ================================ */
-body.dark {
-    color: #e6e6e6;
+body {
+    background: none !important;
+    background-image: none !important;
 }
+
+body.dark {
+    background: #000 !important;
+    background-image: none !important;
+}
+
 
 body.dark .navbar {
     background: #2b2b2b;
@@ -180,4 +187,9 @@ body.dark .footer {
 
 body.dark .theme-icon {
     color: #c49b75; /* soft brown */
+}
+
+body, html {
+    background: none !important;
+    background-image: none !important;
 }
