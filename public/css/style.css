@@ -1,20 +1,3 @@
-/* LIGHT MODE BACKGROUND */
-body {
-    background-color: #FDFBF7; /* warna dasar */
-    background-image: url('/images/pattern-light.png');
-    background-repeat: repeat;
-    background-size: 300px;
-}
-
-/* DARK MODE BACKGROUND — FIXED */
-body.dark {
-    background-color: #2A211D; /* coklat-gelap lembut */
-    background-image: url('/images/pattern-dark.png');
-    background-repeat: repeat;
-    background-size: 320px;
-}
-
-
 /* =====================================
    SEARCH SECTION
 ===================================== */

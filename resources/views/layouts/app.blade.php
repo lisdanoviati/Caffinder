@@ -9,7 +9,32 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-50">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toggles = document.querySelectorAll('.theme-icon');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark');
+        toggles.forEach(btn => btn.textContent = "☀️");
+    }
+
+    toggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            if (body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                toggles.forEach(b => b.textContent = "☀️");
+            } else {
+                localStorage.setItem('theme', 'light');
+                toggles.forEach(b => b.textContent = "🌙");
+            }
+        });
+    });
+});
+</script>
+
+<body>
     <header class="bg-white shadow-md">
     </header>
 
