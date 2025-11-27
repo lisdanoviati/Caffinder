@@ -9,37 +9,10 @@
     @vite(['resources/css/app.css'])
 </head>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById('themeToggle');
-    const body = document.body;
-
-    // Apply stored theme
-    if (localStorage.getItem('theme') === 'dark') {
-        body.classList.add('dark');
-        if (toggleBtn) toggleBtn.textContent = "☀️";
-    }
-
-    // If there IS a button (not all pages have)
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            body.classList.toggle('dark');
-
-            if (body.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-                toggleBtn.textContent = "☀️";
-            } else {
-                localStorage.setItem('theme', 'light');
-                toggleBtn.textContent = "🌙";
-            }
-        });
-    }
-});
-</script>
-
-<!-- <body class="bg-[#F7F2EC] dark:bg-[#0f0f0f] transition-colors duration-300"> -->
-<body class="!bg-transparent !bg-none">
+<!-- <body class="!bg-transparent !bg-none"> -->
 <!-- <body class=""> -->
+<body style="background:#F7F2EC; min-height:100vh;">
+
     <header class="bg-white shadow-md"></header>
 
     {{-- MAIN: full width khusus halaman welcome --}}

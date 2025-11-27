@@ -10,38 +10,46 @@ use Illuminate\Support\Facades\Http;
 class CaffinderController extends Controller
 {
     public function index(Request $request)
-{
-    $fuseki = new RdfCafeService();
+    {
+        $fuseki = new RdfCafeService();
 
-    $search    = $request->q ?? null;
-    $category  = $request->category ?? null;
-    $district  = $request->district ?? null; // 🔥 tambahan
+        // Ambil request user
+        $search     = $request->q ?? null;
+        $category   = $request->category ?? null;
+        $district   = $request->district ?? null;
+        $facilities = $request->facilities ?? []; // checkbox array
+        $priceRange = $request->price ?? null;
+        $order = $request->order ?? null;
 
-    // ⬇ kumpulkan filter
-    $filters = [
-        'category' => $category,
-        'district' => $district
-    ];
 
-    // Jika ada salah satu filter → pakai searchCafes versi baru (3 filter)
-    if ($search || $category || $district) {
-        $cafes = $fuseki->searchCafes($search, $category, $district);
-    } 
-    else {
-        $cafes = $fuseki->getCafes();
+        // Semua filter digabung
+        $filters = [
+            'category'   => $category,
+            'district'   => $district,
+            'facilities' => $facilities,
+            'price'      => $priceRange,
+            'order'      => $order,
+        ];
+
+        // Jika ada filter -> pakai searchCafes versi lengkap
+        if ($search || $category || $district || !empty($facilities)||$priceRange || $order) {
+            $cafes = $fuseki->searchCafes($search, $category, $district, $facilities, $priceRange, $order);
+        } else {
+            $cafes = $fuseki->getCafes();
+        }
+
+        return view('cafes.index', [
+            'cafes'               => $cafes,
+            'categories'          => $fuseki->getCategories(),
+            'districts'           => $fuseki->getDistricts(),
+            'facilities'          => $fuseki->getFacilities(), // opsional
+            'q'                   => $search,
+            'category'            => $category,
+            'district'            => $district,
+            'filters'             => $filters,
+            'selectedFacilities'  => $facilities,
+        ]);
     }
-
-    return view('cafes.index', [
-        'cafes'      => $cafes,
-        'categories' => $fuseki->getCategories(),
-        'districts'  => $fuseki->getDistricts(), // 🔥 tambahan
-        'q'          => $search,
-        'category'   => $category,
-        'district'   => $district,
-        'filters'    => $filters
-    ]);
-}
-
 
    public function show($id)
 {

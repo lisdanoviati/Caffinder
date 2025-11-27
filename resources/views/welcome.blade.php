@@ -26,13 +26,6 @@
            class="px-4 py-2 bg-[#8B5E3C] text-white rounded-full shadow">
             Explore
         </a>
-    
-        <!-- Tombol Toggle Dark Mode -->
-       <button id="themeToggle"
-            class="p-2 rounded-lg bg-transparent hover:bg-white/10 dark:hover:bg-black/20 transition">
-            🌙
-       </button>
-
     </div>
 </div>
 </nav>
@@ -42,7 +35,6 @@
 class="pt-40 pb-40 bg-cover bg-center relative"
 style="background-image: url('/images/welcome.jpg');">
     
-
     {{-- Hapus overlay & blur (di-remove) --}}
 
     <div class="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-10 px-6">

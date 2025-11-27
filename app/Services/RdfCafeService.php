@@ -114,17 +114,53 @@ class RdfCafeService
     return $categories;
 }
 
+public function getFacilities()
+{
+    $query = "
+        PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
+
+        SELECT DISTINCT ?facility
+        WHERE {
+            ?cafe a caff:cafe ;
+                  caff:hasfacility ?fac .
+
+            # Ambil nama properti fasilitas yang bernilai TRUE
+            ?fac ?predicate true .
+
+            BIND(STRAFTER(STR(?predicate), \"#\") AS ?facility)
+        }
+        ORDER BY ?facility
+    ";
+
+    $response = Http::withHeaders([
+        'Accept' => 'application/sparql-results+json',
+        'Content-Type' => 'application/sparql-query'
+    ])->withBody($query, 'application/sparql-query')
+      ->post('http://localhost:3030/caffinder/sparql');
+
+    $json = $response->json();
+
+    if (!isset($json['results']['bindings'])) return [];
+
+    $facilities = [];
+    foreach ($json['results']['bindings'] as $row) {
+        $facilities[] = $row['facility']['value']; // contoh: wifi, laptop_friendly
+    }
+
+    return $facilities;
+}
 
     /**
      * SEARCH (q + category)
      * NOW PAKAI FILTER DI SPARQL → lebih efisien dari filter di Laravel
      */
-    public function searchCafes($keyword, $category = null, $district = null)
+public function searchCafes($keyword = null, $category = null, $district = null, $facilities = [], $priceRange = null, $order = null)
 {
     $query = "
         PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
+        PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 
-        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategoriLabel ?rating
+        SELECT ?cafe ?name ?alamat ?fotoUrl ?kategoriLabel ?rating ?district ?hargaMin ?hargaMax
         WHERE {
             ?cafe a caff:cafe ;
                   caff:nama_cafe ?name ;
@@ -141,29 +177,93 @@ class RdfCafeService
 
             OPTIONAL { ?cafe caff:rating ?rating . }
 
-            # Ekstrak kecamatan dari alamat
+            OPTIONAL { 
+                ?cafe caff:hasprice ?priceNode .
+                OPTIONAL { ?priceNode caff:harga_min ?hargaMin . }
+                OPTIONAL { ?priceNode caff:harga_max ?hargaMax . }
+            }
+
+            # Ekstraksi kecamatan
             BIND(
-                REPLACE(?alamat, \".*Medan ([A-Za-z]+).*\", \"Medan $1\")
-                AS ?district
+                IF(
+                    REGEX(?alamat, \"Kec\\\\.\"),
+                    REPLACE(?alamat, \".*Kec\\\\. ([^,]+),.*\", \"$1\"),
+                    REPLACE(?alamat, \".*Medan ([A-Za-z]+).*\", \"Medan $1\")
+                ) AS ?district
             )
     ";
 
-    // -------------------- FILTER --------------------
-    if (!empty($keyword)) {
+    // Keyword filter
+    if ($keyword) {
         $query .= " FILTER(CONTAINS(LCASE(?name), LCASE(\"$keyword\"))). ";
     }
 
-    if (!empty($category)) {
+    // Category filter
+    if ($category) {
         $query .= " FILTER(STRAFTER(STR(?kategoriNode), \"#\") = \"$category\"). ";
     }
 
-    if (!empty($district)) {
+    // District filter
+    if ($district) {
         $query .= " FILTER(CONTAINS(LCASE(?district), LCASE(\"$district\"))). ";
     }
 
-    $query .= "}
-        ORDER BY ?name
+    // Facility filter
+    if (!empty($facilities)) {
+        $query .= " ?cafe caff:hasfacility ?facNode . ";
+        foreach ($facilities as $f) {
+            $query .= " ?facNode caff:$f true . ";
+        }
+    }
+
+    // Harga filter
+   if ($priceRange) {
+    if ($priceRange == '1-50000') {
+    $query .= "
+        FILTER(
+            BOUND(?hargaMin) && BOUND(?hargaMax) &&
+            xsd:int(?hargaMin) < 50000 &&
+            xsd:int(?hargaMax) >= 1
+        ).
     ";
+}
+
+    if ($priceRange == '50000-75000') {
+    $query .= "
+        FILTER(
+            BOUND(?hargaMin) && BOUND(?hargaMax) &&
+            xsd:int(?hargaMin) <= 75000 &&
+            xsd:int(?hargaMax) >= 50000
+        ).
+    ";
+}
+    if ($priceRange == '75000-100000') {
+    $query .= "
+        FILTER(
+            BOUND(?hargaMin) && BOUND(?hargaMax) &&
+            xsd:int(?hargaMin) <= 100000 &&
+            xsd:int(?hargaMax) >= 75000
+        ).
+    ";
+}
+
+
+}
+
+
+
+    $query .= "} ";   // TUTUP WHERE
+
+    // ORDER BY (TIDAK ADA DUPLIKAT)
+    if ($order == 'rating_desc') {
+        $query .= " ORDER BY DESC(?rating) ";
+    }
+    else if ($order == 'rating_asc') {
+        $query .= " ORDER BY ASC(?rating) ";
+    }
+    else {
+        $query .= " ORDER BY ?name ";
+    }
 
     // Eksekusi SPARQL
     $response = Http::withBody($query, 'application/sparql-query')
@@ -183,13 +283,13 @@ class RdfCafeService
         $id = explode('#', $uri)[1];
 
         $cafes[] = [
-            'id'       => $id,
-            'name'     => $row['name']['value'],
-            'address'  => $row['alamat']['value'],
-            'district' => $row['district']['value'] ?? null,
-            'image'    => $row['fotoUrl']['value'] ?? '/images/default-cafe.jpg',
-            'category' => $row['kategoriLabel']['value'] ?? 'Umum',
-            'rating'   => $row['rating']['value'] ?? null
+            'id'        => $id,
+            'name'      => $row['name']['value'],
+            'address'   => $row['alamat']['value'],
+            'image'     => $row['fotoUrl']['value'] ?? null,
+            'category'  => $row['kategoriLabel']['value'] ?? null,
+            'rating'    => $row['rating']['value'] ?? null,
+            'district'  => $row['district']['value'] ?? null,
         ];
     }
 
