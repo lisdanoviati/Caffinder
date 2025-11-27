@@ -7,85 +7,285 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {{-- Bagian Kiri --}}
-    <div class="bg-white shadow rounded-xl overflow-hidden">
+    <div class="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
         @if($cafe['foto'])
-            <img src="{{ $cafe['foto'] }}" class="w-full h-64 object-cover">
+            <img src="{{ $cafe['foto'] }}" 
+                 class="w-full h-64 object-cover rounded-b-xl">
         @endif
 
-        <div class="p-4">
-            <h2 class="text-xl font-bold">{{ $cafe['name'] }}</h2>
-            <p class="text-gray-600">{{ $cafe['alamat'] }}</p>
-            <p class="text-gray-600">Kategori: {{ $cafe['kategori'] ?? 'N/A' }}</p>
-            <p class="text-gray-600">Rating: {{ $cafe['rating'] ?? 'N/A' }}</p>
-            <p class="text-gray-600">Telepon: {{ $cafe['telepon'] ?? '-' }}</p>
+        <div class="p-5 space-y-1">
+            <h2 class="text-2xl font-bold text-[#4A2F21]">{{ $cafe['name'] }}</h2>
+
+           {{-- Rating + Bintang --}}
+            @php
+                $rating = isset($cafe['rating']) ? floatval($cafe['rating']) : 0;
+                $fullStars = floor($rating);
+                $halfStar = ($rating - $fullStars) >= 0.5;
+                $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+            @endphp
+
+            <div class="flex items-center gap-3 mt-1">
+
+                {{-- Angka rating dulu --}}
+                <span class="text-base font-semibold text-gray-700">
+                    {{ number_format($rating, 1, ',', '.') }}
+                </span>
+
+                {{-- Ikon bintang --}}
+                <div class="flex items-center">
+                    {{-- Full star --}}
+                    @for ($i = 0; $i < $fullStars; $i++)
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.974a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.384 2.46a1 1 0 00-.364 1.118l1.286 3.974c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.387 2.463c-.784.57-1.84-.197-1.54-1.118l1.286-3.974a1 1 0 00-.364-1.118L2.612 9.401c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69L9.05 2.927z"/>
+                        </svg>
+                    @endfor
+
+                    {{-- Half star --}}
+                    @if ($halfStar)
+                        <svg class="w-5 h-5 text-yellow-500" viewBox="0 0 20 20">
+                            <defs>
+                                <linearGradient id="halfGrad">
+                                    <stop offset="50%" stop-color="currentColor"/>
+                                    <stop offset="50%" stop-color="transparent"/>
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#halfGrad)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.974a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.384 2.46a1 1 0 00-.364 1.118l1.286 3.974c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.387 2.463c-.784.57-1.84-.197-1.54-1.118l1.286-3.974a1 1 0 00-.364-1.118L2.612 9.401c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69L9.05 2.927z"/>
+                        </svg>
+                    @endif
+
+                    {{-- Empty star --}}
+                    @for ($i = 0; $i < $emptyStars; $i++)
+                        <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.974a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.384 2.46a1 1 0 00-.364 1.118l1.286 3.974c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.387 2.463c-.784.57-1.84-.197-1.54-1.118l1.286-3.974a1 1 0 00-.364-1.118L2.612 9.401c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69L9.05 2.927z"/>
+                        </svg>
+                    @endfor
+                </div>
+
+            </div>
+
+
+            <p class="text-gray-600 mt-1">{{ $cafe['alamat'] }}</p>
+            <p class="text-gray-600">Kategori: 
+                <span class="font-semibold text-[#6B4F3A]">{{ $cafe['kategori'] ?? 'N/A' }}</span>
+            </p>
+            <p class="text-gray-600">Telepon: 
+                <span class="font-semibold">{{ $cafe['telepon'] ?? '-' }}</span>
+            </p>
         </div>
 
         {{-- Maps Static Image --}}
         @if($cafe['latitude'] && $cafe['longitude'])
         <div class="p-4">
-            <iframe
-                width="100%"
-                height="300"
-                frameborder="0"
-                style="border:0; border-radius: 0.5rem;"
-                src="https://www.google.com/maps?q={{ $cafe['latitude'] }},{{ $cafe['longitude'] }}&output=embed"
-                allowfullscreen>
-            </iframe>
+            <div class="rounded-xl overflow-hidden shadow-md">
+                <iframe
+                    width="100%"
+                    height="300"
+                    frameborder="0"
+                    style="border:0;"
+                    src="https://www.google.com/maps?q={{ $cafe['latitude'] }},{{ $cafe['longitude'] }}&output=embed"
+                    allowfullscreen>
+                </iframe>
+            </div>
         </div>
         @endif
     </div>
 
     {{-- Bagian Kanan --}}
-    <div class="lg:col-span-2 bg-white shadow rounded-xl p-6 text-gray-800">
+    <div class="lg:col-span-2 bg-white shadow-lg rounded-2xl p-8 border border-gray-200 text-gray-800">
 
-        <h3 class="text-2xl font-semibold mb-4">Informasi Cafe</h3>
+        {{-- Back button di atas --}}
+        <div class="mb-4">
+            <a href="{{ url()->previous() }}" 
+               class="inline-flex items-center gap-2 text-sm font-semibold text-green-600 hover:text-green-700">
+                {{-- icon panah --}}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Kembali
+            </a>
+        </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            
-            {{-- Fasilitas --}}
-            <p><b>WiFi:</b> {{ $cafe['wifi'] ? 'Ya' : 'Tidak' }}</p>
-            <p><b>Ramah Laptop:</b> {{ $cafe['laptop'] ? 'Ya' : 'Tidak' }}</p>
-            <p><b>Alcohol:</b> {{ $cafe['alcohol'] ? 'Ya' : 'Tidak' }}</p>
-            <p><b>Kursi Roda:</b> {{ $cafe['wheel'] ? 'Ya' : 'Tidak' }}</p>
-            <p><b>Live Music:</b> {{ $cafe['live_music'] ? 'Ya' : 'Tidak' }}</p>
-            <p><b>Pet Friendly:</b> {{ $cafe['pet_friendly'] ? 'Ya' : 'Tidak' }}</p>
+        <h3 class="text-2xl font-semibold mb-6 text-[#4A2F21]">Informasi Cafe</h3>
+
+        <div class="grid grid-cols-2 gap-4 text-gray-700">
+
+            {{-- Fasilitas dengan badge --}}
+            <p>
+                <b class="text-[#6B4F3A]">WiFi:</b>
+                @if($cafe['wifi'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {{-- centang --}}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        {{-- silang --}}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
+
+            <p>
+                <b class="text-[#6B4F3A]">Ramah Laptop:</b>
+                @if($cafe['laptop'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
+
+            <p>
+                <b class="text-[#6B4F3A]">Alcohol:</b>
+                @if($cafe['alcohol'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
+
+            <p>
+                <b class="text-[#6B4F3A]">Kursi Roda:</b>
+                @if($cafe['wheel'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
+
+            <p>
+                <b class="text-[#6B4F3A]">Live Music:</b>
+                @if($cafe['live_music'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
+
+            <p>
+                <b class="text-[#6B4F3A]">Pet Friendly:</b>
+                @if($cafe['pet_friendly'])
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Ya
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Tidak
+                    </span>
+                @endif
+            </p>
 
             {{-- Harga --}}
-            <p><b>Harga Min:</b> {{ $cafe['harga_min'] ?? '-' }}</p>
-            <p><b>Harga Max:</b> {{ $cafe['harga_max'] ?? '-' }}</p>
+            <p><b class="text-[#6B4F3A]">Harga Min:</b> {{ $cafe['harga_min'] ?? '-' }}</p>
+            <p><b class="text-[#6B4F3A]">Harga Max:</b> {{ $cafe['harga_max'] ?? '-' }}</p>
 
-            {{-- Jam Operasional --}}
-            
             {{-- Lain-lain --}}
-            <p><b>Menu Rekomendasi:</b> {{ $cafe['bestmenu'] ?? '-' }}</p>
-            <p><b>Latitude:</b> {{ $cafe['latitude'] }}</p>
-            <p><b>Longitude:</b> {{ $cafe['longitude'] }}</p>
+            <p><b class="text-[#6B4F3A]">Menu Rekomendasi:</b> {{ $cafe['bestmenu'] ?? '-' }}</p>
+            <p><b class="text-[#6B4F3A]">Latitude:</b> {{ $cafe['latitude'] }}</p>
+            <p><b class="text-[#6B4F3A]">Longitude:</b> {{ $cafe['longitude'] }}</p>
             
         </div>
+
         <br>
-        <div>
-            <h3 class="text-xl font-semibold mb-3">Jam Operasional</h3><br>
-        
-            <div class="grid grid-cols-2 gap-2 text-gray-700">
-                @php
-                    $days = [
-                        'Senin' => ['open' => $cafe['open_senin'] ?? '--', 'close' => $cafe['close_senin'] ?? '--'],
-                        'Selasa' => ['open' => $cafe['open_selasa'] ?? '--', 'close' => $cafe['close_selasa'] ?? '--'],
-                        'Rabu' => ['open' => $cafe['open_rabu'] ?? '--', 'close' => $cafe['close_rabu'] ?? '--'],
-                        'Kamis' => ['open' => $cafe['open_kamis'] ?? '--', 'close' => $cafe['close_kamis'] ?? '--'],
-                        'Jumat' => ['open' => $cafe['open_jumat'] ?? '--', 'close' => $cafe['close_jumat'] ?? '--'],
-                        'Sabtu' => ['open' => $cafe['open_sabtu'] ?? '--', 'close' => $cafe['close_sabtu'] ?? '--'],
-                        'Minggu' => ['open' => $cafe['open_minggu'] ?? '--', 'close' => $cafe['close_minggu'] ?? '--'],
-                    ];
-                @endphp
-        
-                @foreach($days as $day => $time)
-                    <p><b>{{ $day }}:</b> {{ $time['open'] }} - {{ $time['close'] }}</p>
-                @endforeach
-            </div>
+
+       <div>
+    <h3 class="text-xl font-semibold mb-4 text-[#4A2F21]">Jam Operasional</h3>
+
+    <div class="bg-[#FAF5F0] border border-[#E8D8CC] rounded-2xl p-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10 text-gray-700">
+
+            @php
+                $days = [
+                    'Senin' => ['open' => $cafe['open_senin'] ?? '--', 'close' => $cafe['close_senin'] ?? '--'],
+                    'Selasa' => ['open' => $cafe['open_selasa'] ?? '--', 'close' => $cafe['close_selasa'] ?? '--'],
+                    'Rabu' => ['open' => $cafe['open_rabu'] ?? '--', 'close' => $cafe['close_rabu'] ?? '--'],
+                    'Kamis' => ['open' => $cafe['open_kamis'] ?? '--', 'close' => $cafe['close_kamis'] ?? '--'],
+                    'Jumat' => ['open' => $cafe['open_jumat'] ?? '--', 'close' => $cafe['close_jumat'] ?? '--'],
+                    'Sabtu' => ['open' => $cafe['open_sabtu'] ?? '--', 'close' => $cafe['close_sabtu'] ?? '--'],
+                    'Minggu' => ['open' => $cafe['open_minggu'] ?? '--', 'close' => $cafe['close_minggu'] ?? '--'],
+                ];
+            @endphp
+
+            @foreach($days as $day => $time)
+            
+
+                <div class="flex items-center gap-1 border-b border-[#E8D8CC] pb-2">
+                <!-- <div class="flex justify-between border-b border-[#E8D8CC] pb-2"> -->
+                    <span class="font-semibold text-[#6B4F3A]">{{ $day }}</span>
+                    <span>{{ $time['open'] }} - {{ $time['close'] }}</span>
+                </div>
+            @endforeach
+
         </div>
-        <a href="{{ url()->previous() }}" class="text-green-600 mt-6 inline-block">← Kembali</a>
-        
+
+    </div>
+</div>
+
     </div>
 </div>
 
