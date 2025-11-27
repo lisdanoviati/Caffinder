@@ -74,7 +74,7 @@ style="background-image: url('/images/welcome.jpg');">
             <img src="/images/about1.jpg" class="rounded-xl mb-3 h-32 w-full object-cover">
             <h3 class="text-xl font-semibold" style="color:#5A3A28;">Tentang Caffinder</h3>
             <p class="text-[#5A3A28]/70 text-sm mt-2 mt-auto">
-                Platform untuk menemukan cafe terbaik di kotamu.
+                Tempat terbaik untuk menemukan café favoritmu. Kami hadir untuk membantumu menjelajahi berbagai spot hangout dengan suasana nyaman, menu yang variatif, dan vibe yang cocok untuk siapa pun.
             </p>
         </div>
 
@@ -82,7 +82,7 @@ style="background-image: url('/images/welcome.jpg');">
             <img src="/images/about2.jpg" class="rounded-xl mb-3 h-32 w-full object-cover">
             <h3 class="text-xl font-semibold" style="color:#5A3A28;">Rekomendasi Real</h3>
             <p class="text-[#5A3A28]/70 text-sm mt-2 mt-auto">
-                Semua data dikurasi berdasarkan rating real pengguna.
+                Semua rekomendasi berasal dari penilaian asli para pengunjung. Transparan, jujur, dan selalu diperbarui agar kamu mendapatkan informasi yang benar-benar relevan dan dapat dipercaya.
             </p>
         </div>
 
@@ -90,7 +90,7 @@ style="background-image: url('/images/welcome.jpg');">
             <img src="/images/about3.jpg" class="rounded-xl mb-3 h-32 w-full object-cover">
             <h3 class="text-xl font-semibold" style="color:#5A3A28;">Quality First</h3>
             <p class="text-[#5A3A28]/70 text-sm mt-2 mt-auto">
-                Fokus pada ambience, rasa kopi, dan pengalaman pengunjung.
+                Kami mengutamakan kualitas—mulai dari ambience, pelayanan, hingga kenyamanan pengunjung. Setiap café dipilih dan dinilai berdasarkan standar kualitas yang konsisten.
             </p>
         </div>
     </div>
