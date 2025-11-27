@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caffinder @yield('title')</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
 
     @vite(['resources/css/app.css'])
 </head>

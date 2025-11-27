@@ -68,7 +68,13 @@
             <p class="text-gray-600">Kategori: 
                 <span class="font-semibold text-[#6B4F3A]">{{ $cafe['kategori'] ?? 'N/A' }}</span>
             </p>
-            <p class="text-gray-600">Telepon: 
+           {{-- Telepon + Ikon Telp --}}
+            <p class="text-gray-600 flex items-center gap-2 mt-1">
+                <svg class="w-5 h-5 text-[#6B4F3A]" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 6.75c0 8.284 6.716 15 15 15h1.5a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106a1.13 1.13 0 00-1.173.417l-.97 1.293a1.125 1.125 0 01-1.21.378 12.035 12.035 0 01-7.143-7.143 1.125 1.125 0 01.378-1.21l1.293-.97c.34-.255.485-.694.417-1.173L6.713 3.102A1.125 1.125 0 005.622 2.25H4.25A2.25 2.25 0 002 4.5v2.25z"/>
+                </svg>
                 <span class="font-semibold">{{ $cafe['telepon'] ?? '-' }}</span>
             </p>
         </div>

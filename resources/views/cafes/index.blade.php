@@ -8,8 +8,11 @@
 <div class="navbar fixed top-0 left-0 w-full flex justify-between items-center px-6 py-3 shadow z-50"
      style="background:#8B5E3C;">
     
-    <div class="logo font-bold text-[22px] text-white">
-        Caffinder
+   <div class="flex items-center gap-3">
+        <img src="/images/logo.png" alt="Logo" class="h-9 w-9 object-cover">
+        <span class="text-2xl font-bold text-white drop-shadow-md">
+                Caffinder
+        </span>
     </div>
     
     <div class="navbar-links flex items-center gap-6 text-lg text-white">

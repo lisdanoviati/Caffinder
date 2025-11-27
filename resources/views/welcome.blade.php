@@ -10,10 +10,13 @@
            bg-white/10 backdrop-blur-md shadow-sm">
     <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
-        <div class="text-2xl font-bold text-white drop-shadow-md">
-            Caffinder
+        <div class="flex items-center gap-3">
+            <img src="/images/logo.png" alt="Logo" class="h-9 w-9 object-cover">
+            <span class="text-2xl font-bold text-white drop-shadow-md">
+                Caffinder
+            </span>
         </div>
-
+        
         <ul class="flex gap-8 font-medium">
             <li><a href="#home" class="text-white hover:text-[#F7F2EC]">Home</a></li>
             <li><a href="#about" class="text-white hover:text-[#F7F2EC]">About</a></li>
