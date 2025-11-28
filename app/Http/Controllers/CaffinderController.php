@@ -6,22 +6,19 @@ use Illuminate\Http\Request;
 use App\Services\RdfCafeService;
 use Illuminate\Support\Facades\Http;
 
-
 class CaffinderController extends Controller
 {
     public function index(Request $request)
     {
         $fuseki = new RdfCafeService();
 
-        // Ambil request user
         $search     = $request->q ?? null;
         $category   = $request->category ?? null;
         $district   = $request->district ?? null;
-        $facilities = $request->facilities ?? []; // checkbox array
+        $facilities = $request->facilities ?? [];
         $priceRange = $request->price ?? null;
         $order      = $request->order ?? null;
 
-        // Semua filter digabung
         $filters = [
             'category'   => $category,
             'district'   => $district,
@@ -30,14 +27,13 @@ class CaffinderController extends Controller
             'order'      => $order,
         ];
 
-        // Jika ada filter -> pakai searchCafes versi lengkap
         if ($search || $category || $district || !empty($facilities) || $priceRange || $order) {
             $cafes = $fuseki->searchCafes($search, $category, $district, $facilities, $priceRange, $order);
         } else {
             $cafes = $fuseki->getCafes();
         }
 
-        // 🔧 DECODE semua entitas HTML di hasil Fuseki
+        // FIX: decode semua entity
         if (is_array($cafes)) {
             $cafes = $this->decodeHtmlEntitiesArray($cafes);
         }
@@ -62,27 +58,25 @@ class CaffinderController extends Controller
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
         SELECT ?name ?telepon ?rating ?alamat ?kategori 
-            ?wifi ?alcohol ?laptop ?wheel 
-            ?latitude ?longitude ?locurl 
-            ?bestmenu ?foto
-            ?harga_min ?harga_max
-            ?open_senin ?close_senin
-            ?open_selasa ?close_selasa
-            ?open_rabu ?close_rabu
-            ?open_kamis ?close_kamis
-            ?open_jumat ?close_jumat
-            ?open_sabtu ?close_sabtu
-            ?open_minggu ?close_minggu
-            ?live_music ?pet_friendly
+               ?wifi ?alcohol ?laptop ?wheel 
+               ?latitude ?longitude ?locurl 
+               ?bestmenu ?foto
+               ?harga_min ?harga_max
+               ?open_senin ?close_senin
+               ?open_selasa ?close_selasa
+               ?open_rabu ?close_rabu
+               ?open_kamis ?close_kamis
+               ?open_jumat ?close_jumat
+               ?open_sabtu ?close_sabtu
+               ?open_minggu ?close_minggu
+               ?live_music ?pet_friendly
         WHERE {
-
             caff:$id a caff:cafe ;
-                    caff:nama_cafe ?name ;
-                    caff:rating ?rating ;
-                    caff:hasaddress ?alamatNode .
+                     caff:nama_cafe ?name ;
+                     caff:rating ?rating ;
+                     caff:hasaddress ?alamatNode .
 
             OPTIONAL { caff:$id caff:telepon ?telepon . }
-
             ?alamatNode caff:nama_alamat ?alamat .
 
             OPTIONAL {
@@ -135,14 +129,13 @@ class CaffinderController extends Controller
             }
         }
         LIMIT 1
-    ";
+        ";
 
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
+        $response = Http::withHeaders([
             'Content-Type' => 'application/sparql-query',
             'Accept' => 'application/sparql-results+json'
-        ])
-        ->withBody($query, 'application/sparql-query')
-        ->post('http://localhost:3030/caffinder/sparql');
+        ])->withBody($query, 'application/sparql-query')
+          ->post('http://localhost:3030/caffinder/sparql');
 
         if ($response->failed()) {
             abort(500, "Fuseki error: " . $response->body());
@@ -167,12 +160,12 @@ class CaffinderController extends Controller
             'kategori'  => $this->simplifyKategori($get('kategori')),
             'foto'      => $get('foto'),
 
-            'wifi'      => filter_var($get('wifi'), FILTER_VALIDATE_BOOLEAN),
-            'alcohol'   => filter_var($get('alcohol'), FILTER_VALIDATE_BOOLEAN),
-            'laptop'    => filter_var($get('laptop'), FILTER_VALIDATE_BOOLEAN),
-            'wheel'     => filter_var($get('wheel'), FILTER_VALIDATE_BOOLEAN),
-            'live_music'=> filter_var($get('live_music'), FILTER_VALIDATE_BOOLEAN),
-            'pet_friendly'=> filter_var($get('pet_friendly'), FILTER_VALIDATE_BOOLEAN),
+            'wifi'         => filter_var($get('wifi'), FILTER_VALIDATE_BOOLEAN),
+            'alcohol'      => filter_var($get('alcohol'), FILTER_VALIDATE_BOOLEAN),
+            'laptop'       => filter_var($get('laptop'), FILTER_VALIDATE_BOOLEAN),
+            'wheel'        => filter_var($get('wheel'), FILTER_VALIDATE_BOOLEAN),
+            'live_music'   => filter_var($get('live_music'), FILTER_VALIDATE_BOOLEAN),
+            'pet_friendly' => filter_var($get('pet_friendly'), FILTER_VALIDATE_BOOLEAN),
 
             'harga_min' => $get('harga_min'),
             'harga_max' => $get('harga_max'),
@@ -199,16 +192,11 @@ class CaffinderController extends Controller
             'bestmenu'  => $get('bestmenu'),
         ];
 
-        // decode entitas HTML
-        $cafe = array_map(function ($value) {
-            return is_string($value)
-                ? html_entity_decode($value, ENT_QUOTES, 'UTF-8')
-                : $value;
-        }, $cafe);
+        // FIX: decode semua entity utk halaman detail
+        $cafe = array_map(fn($v) => $this->deepDecode($v), $cafe);
 
         return view('cafes.show', compact('cafe'));
     }
-
 
     private function simplifyKategori($uri)
     {
@@ -220,21 +208,28 @@ class CaffinderController extends Controller
         return $uri;
     }
 
-    private function decodeHtmlEntityValue($value)
+    // ============================
+    // ENTITY DECODER FINAL
+    // ============================
+
+    private function deepDecode($value)
     {
-        return is_string($value) 
-            ? html_entity_decode($value, ENT_QUOTES, 'UTF-8') 
-            : $value;
+        if (!is_string($value)) return $value;
+
+        $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+
+        $value = str_replace("&apos;", "'", $value);
+        $value = str_replace("&#39;", "'", $value);
+        $value = str_replace("&quot;", "\"", $value);
+        $value = str_replace("&amp;", "&", $value);
+
+        return $value;
     }
 
     private function decodeHtmlEntitiesArray(array $items): array
     {
         return array_map(function ($item) {
-            return array_map(function ($value) {
-                return is_string($value)
-                    ? html_entity_decode($value, ENT_QUOTES, 'UTF-8')
-                    : $value;
-            }, $item);
+            return array_map(fn($v) => $this->deepDecode($v), $item);
         }, $items);
     }
 
@@ -243,11 +238,11 @@ class CaffinderController extends Controller
         $raw = strtolower($req->q ?? '');
 
         $filters = [
-            'wifi'         => str_contains($raw, 'wifi'),
-            'murah'        => str_contains($raw, 'murah'),
-            'laptop'       => str_contains($raw, 'nugas') || str_contains($raw, 'laptop'),
-            'specialty'    => str_contains($raw, 'specialty'),
-            'instagramable'=> str_contains($raw, 'aesthetic') || str_contains($raw, 'instagramable'),
+            'wifi'          => str_contains($raw, 'wifi'),
+            'murah'         => str_contains($raw, 'murah'),
+            'laptop'        => str_contains($raw, 'nugas') || str_contains($raw, 'laptop'),
+            'specialty'     => str_contains($raw, 'specialty'),
+            'instagramable' => str_contains($raw, 'aesthetic') || str_contains($raw, 'instagramable'),
         ];
 
         $keyword = $raw;
@@ -255,7 +250,6 @@ class CaffinderController extends Controller
         $service = app(\App\Services\RdfCafeService::class);
         $cafes = $service->smartSearchWithDistrict($filters, $keyword);
 
-        // decode entitas HTML
         if (is_array($cafes)) {
             $cafes = $this->decodeHtmlEntitiesArray($cafes);
         }
