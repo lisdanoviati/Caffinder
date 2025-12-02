@@ -64,7 +64,20 @@
             </div>
 
 
-            <p class="text-gray-600 mt-1">{{ $cafe['alamat'] }}</p>
+            @if(isset($cafe['osm']['display_name']))
+    <div class="p-4 pt-0">
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <h3 class="font-semibold text-blue-700 mb-1">Alamat Resmi (OpenStreetMap)</h3>
+            <p class="text-sm text-gray-700">{{ $cafe['osm']['display_name'] }}</p>
+
+            @if(isset($cafe['osm']['boundingbox']))
+                <p class="mt-1 text-xs text-gray-600">
+                    Bounding Box: {{ implode(', ', $cafe['osm']['boundingbox']) }}
+                </p>
+            @endif
+        </div>
+    </div>
+@endif
             <p class="text-gray-600">Kategori: 
                 <span class="font-semibold text-[#6B4F3A]">{{ $cafe['kategori'] ?? 'N/A' }}</span>
             </p>
@@ -94,6 +107,9 @@
             </div>
         </div>
         @endif
+        
+
+
     </div>
 
     {{-- Bagian Kanan --}}

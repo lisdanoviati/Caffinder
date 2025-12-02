@@ -192,6 +192,28 @@ class CaffinderController extends Controller
             'bestmenu'  => $get('bestmenu'),
         ];
 
+        // === INTEGRASI DATASET EKSTERNAL OSM (NOMINATIM) ===
+$lat = $cafe['latitude'];
+$lon = $cafe['longitude'];
+
+$osmResponse = Http::withHeaders([
+    'User-Agent' => 'CaffinderApp/1.0 (contact: example@gmail.com)'
+])->get("https://nominatim.openstreetmap.org/reverse", [
+    'lat' => $lat,
+    'lon' => $lon,
+    'format' => 'json',
+    'addressdetails' => 1,
+    'zoom' => 18,
+]);
+
+$osmData = $osmResponse->json();   // <-- INI WAJIB ADA
+
+$cafe['osm'] = [
+    'display_name' => $osmData['display_name'] ?? null,
+    'address'      => $osmData['address'] ?? null,
+    'boundingbox'  => $osmData['boundingbox'] ?? null,
+];
+
         // FIX: decode semua entity utk halaman detail
         $cafe = array_map(fn($v) => $this->deepDecode($v), $cafe);
 
