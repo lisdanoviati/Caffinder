@@ -719,7 +719,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C008">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Pos No.1, Kesawan, Kec. Medan Bar., Kota Medan, Sumatera Utara 20111</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Pos No.1, Kesawan, Kec. Medan Baru, Kota Medan, Sumatera Utara 20111</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#foto_url">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
@@ -1507,11 +1507,11 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C044">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Bukit Barisan I No.1 ABC, Glugur Darat II, Kec. Medan Tim., Kota Medan, Sumatera Utara 20238</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Bukit Barisan I No.1 ABC, Glugur Darat II, Kec. Medan Timur, Kota Medan, Sumatera Utara 20238</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C038">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. T. Amir Hamzah No.56 C, Helvetia Tim., Kec. Medan Helvetia, Kota Medan, Sumatera Utara 20124</caff:nama_alamat>
+    <caff:nama_alamat>Jl. T. Amir Hamzah No.56 C, Helvetia Timur, Kec. Medan Helvetia, Kota Medan, Sumatera Utara 20124</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#opening_C055">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#openinghour"/>
@@ -1592,7 +1592,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C040">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Gg. Peringatan No.94, Silalas, Kec. Medan Bar., Kota Medan, Sumatera Utara 20235</caff:nama_alamat>
+    <caff:nama_alamat>Gg. Peringatan No.94, Silalas, Kec. Medan Baru, Kota Medan, Sumatera Utara 20235</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C041">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
@@ -2275,7 +2275,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C098">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. T. Amir Hamzah No.11, Sei Agul, Kec. Medan Bar., Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
+    <caff:nama_alamat>Jl. T. Amir Hamzah No.11, Sei Agul, Kec. Medan Baru, Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#opening_C022">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#openinghour"/>
@@ -3671,7 +3671,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C055">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>ABC Samping Hosana Keramik, Jl. Gunung Krakatau No.192, Pulo Brayan Darat I, Kec. Medan Tim., Kota Medan, Sumatera Utara 20237</caff:nama_alamat>
+    <caff:nama_alamat>ABC Samping Hosana Keramik, Jl. Gunung Krakatau No.192, Pulo Brayan Darat I, Kec. Medan Timur, Kota Medan, Sumatera Utara 20237</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#opening_C008">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#openinghour"/>
@@ -4005,7 +4005,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C086">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Karya No.41, Sei Agul, Kec. Medan Bar., Kota Medan, Sumatera Utara 20117</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Karya No.41, Sei Agul, Kec. Medan Baru, Kota Medan, Sumatera Utara 20117</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C017">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
@@ -4253,7 +4253,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C032">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. H. Adam Malik No.128, Silalas, Kec. Medan Bar., Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
+    <caff:nama_alamat>Jl. H. Adam Malik No.128, Silalas, Kec. Medan Baru, Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#hasmenubest">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
@@ -4380,7 +4380,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C026">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. T. Amir Hamzah, Helvetia Tim., Kec. Medan Helvetia, Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
+    <caff:nama_alamat>Jl. T. Amir Hamzah, Helvetia Timur, Kec. Medan Helvetia, Kota Medan, Sumatera Utara 20114</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#fasilitas_C005">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#fasilitas"/>
@@ -4453,11 +4453,11 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C060">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Gaharu No.2B, Gaharu, Kec. Medan Tim., Kota Medan, Sumatera Utara 20235</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Gaharu No.2B, Gaharu, Kec. Medan Timur, Kota Medan, Sumatera Utara 20235</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C075">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Prof. H. M. Yamin No.208, Perintis, Kec. Medan Tim., Kota Medan, Sumatera Utara 20234</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Prof. H. M. Yamin No.208, Perintis, Kec. Medan Timur, Kota Medan, Sumatera Utara 20234</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#lokasi_C005">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#lokasi"/>
@@ -4820,7 +4820,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C047">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Tembakau Deli No.1, Kesawan, Kec. Medan Bar., Kota Medan, Sumatera Utara 20231</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Tembakau Deli No.1, Kesawan, Kec. Medan Baru, Kota Medan, Sumatera Utara 20231</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#fasilitas_C039">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#fasilitas"/>
@@ -5146,7 +5146,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C034">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>JMFG+5HW, Jl. Bilal Ujung, Pulo Brayan Darat I, Kec. Medan Tim., Kota Medan, Sumatera Utara 20239</caff:nama_alamat>
+    <caff:nama_alamat>JMFG+5HW, Jl. Bilal Ujung, Pulo Brayan Darat I, Kec. Medan Timur, Kota Medan, Sumatera Utara 20239</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#fasilitas">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
@@ -5562,7 +5562,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C065">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. KL. Yos Sudarso No.83, Glugur Kota, Kec. Medan Bar., Kota Medan, Sumatera Utara 20115</caff:nama_alamat>
+    <caff:nama_alamat>Jl. KL. Yos Sudarso No.83, Glugur Kota, Kec. Medan Baru, Kota Medan, Sumatera Utara 20115</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#open_kamis">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
@@ -5714,7 +5714,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C031">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Perkebunan No.58, Pulo Brayan Bengkel, Kec. Medan Tim., Kota Medan, Sumatera Utara 20241</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Perkebunan No.58, Pulo Brayan Bengkel, Kec. Medan Timur, Kota Medan, Sumatera Utara 20241</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#rekomendasi_C057">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#recomendation"/>
@@ -6250,7 +6250,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C002">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>
-    <caff:nama_alamat>Jl. Tengku Amir Hamzah, no.8, Sei Agul, Kec. Medan Bar., Kota Medan, Sumatera, Utara 20117, Kota Medan, Sumatera Utara 20117</caff:nama_alamat>
+    <caff:nama_alamat>Jl. Tengku Amir Hamzah, no.8, Sei Agul, Kec. Medan Baru, Kota Medan, Sumatera, Utara 20117, Kota Medan, Sumatera Utara 20117</caff:nama_alamat>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat_C091">
     <rdf:type rdf:resource="http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#alamat"/>

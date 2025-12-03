@@ -64,7 +64,7 @@
             </div>
 
 
-            @if(isset($cafe['osm']['display_name']))
+@if(isset($cafe['osm']['display_name']))
     <div class="p-4 pt-0">
         <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
             <h3 class="font-semibold text-blue-700 mb-1">Alamat Resmi (OpenStreetMap)</h3>
