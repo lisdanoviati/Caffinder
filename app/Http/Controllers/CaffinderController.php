@@ -51,9 +51,9 @@ class CaffinderController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show($id) //Bagian ini mengambil detail lengkap cafe
     {
-        $query = "
+        $query = " 
         PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 

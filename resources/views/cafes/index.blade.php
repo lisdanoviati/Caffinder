@@ -64,7 +64,7 @@
                        bg-white dark:bg-[#1f1b18] dark:border-[#8B5E3C] dark:text-gray-200">
                 <option value="">Semua</option>
 
-                @foreach($categories as $cat)
+                @foreach($categories as $cat) 
                     <option value="{{ $cat['id'] }}" 
                             @selected($cat['id'] == ($filters['category'] ?? ''))>
                         {{ $cat['name'] }}
