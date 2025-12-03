@@ -32,7 +32,7 @@ class RdfCafeService
             OPTIONAL { ?cafe caff:rating ?rating . }
         }
         ORDER BY ?name
-        LIMIT 6
+       
     ';
 
     $response = Http::withBody($query, 'application/sparql-query')

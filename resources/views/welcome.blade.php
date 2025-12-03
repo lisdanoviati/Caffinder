@@ -24,6 +24,7 @@
         </ul>
 
         <div>
+
         <!-- Tombol Explore -->
         <a href="{{ route('cafes.index') }}"
            class="px-4 py-2 bg-[#8B5E3C] text-white rounded-full shadow">
@@ -44,8 +45,8 @@ style="background-image: url('/images/welcome.jpg');">
 
         <div class="flex flex-col justify-center text-white drop-shadow-xl">
            <h1 class="text-4xl font-bold leading-tight">
-            Explore Medan’s Best Cafes With Just One Tap!
-        </h1>
+                Explore Medan’s Best Cafes With Just One Tap!
+            </h1>
 
             <p class="mt-4 text-white/90">
                 Temukan cafe terbaik, ambience premium, dan rekomendasi menu terbaik sesuai selera kamu. Dapatkan info lengkap seperti rating, alamat, fasilitas, menu rekomendasi, dan jam buka setiap cafe.
