@@ -276,36 +276,37 @@
        <div>
 
     <h3 class="text-xl font-semibold mb-4 text-[#4A2F21]">Jam Operasional</h3>
+            <div class="bg-[#FAF5F0] border border-[#E8D8CC] rounded-2xl p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10 text-gray-700">
 
-    <div class="bg-[#FAF5F0] border border-[#E8D8CC] rounded-2xl p-6">
+                    @php
+                        
+                        function formatTime($time) {
+                            if (!$time) return '--';
+                            return substr($time, 0, 5); // ambil HH:MM saja
+                        }
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10 text-gray-700">
+                        $days = [
+                            'Senin' => ['open' => formatTime($cafe['open_senin'] ?? null), 'close' => formatTime($cafe['close_senin'] ?? null)],
+                            'Selasa' => ['open' => formatTime($cafe['open_selasa'] ?? null), 'close' => formatTime($cafe['close_selasa'] ?? null)],
+                            'Rabu' => ['open' => formatTime($cafe['open_rabu'] ?? null), 'close' => formatTime($cafe['close_rabu'] ?? null)],
+                            'Kamis' => ['open' => formatTime($cafe['open_kamis'] ?? null), 'close' => formatTime($cafe['close_kamis'] ?? null)],
+                            'Jumat' => ['open' => formatTime($cafe['open_jumat'] ?? null), 'close' => formatTime($cafe['close_jumat'] ?? null)],
+                            'Sabtu' => ['open' => formatTime($cafe['open_sabtu'] ?? null), 'close' => formatTime($cafe['close_sabtu'] ?? null)],
+                            'Minggu' => ['open' => formatTime($cafe['open_minggu'] ?? null), 'close' => formatTime($cafe['close_minggu'] ?? null)],
+                        ];
+                    @endphp
 
-            @php
-                $days = [
-                    'Senin' => ['open' => $cafe['open_senin'] ?? '--', 'close' => $cafe['close_senin'] ?? '--'],
-                    'Selasa' => ['open' => $cafe['open_selasa'] ?? '--', 'close' => $cafe['close_selasa'] ?? '--'],
-                    'Rabu' => ['open' => $cafe['open_rabu'] ?? '--', 'close' => $cafe['close_rabu'] ?? '--'],
-                    'Kamis' => ['open' => $cafe['open_kamis'] ?? '--', 'close' => $cafe['close_kamis'] ?? '--'],
-                    'Jumat' => ['open' => $cafe['open_jumat'] ?? '--', 'close' => $cafe['close_jumat'] ?? '--'],
-                    'Sabtu' => ['open' => $cafe['open_sabtu'] ?? '--', 'close' => $cafe['close_sabtu'] ?? '--'],
-                    'Minggu' => ['open' => $cafe['open_minggu'] ?? '--', 'close' => $cafe['close_minggu'] ?? '--'],
-                ];
-            @endphp
+                    @foreach($days as $day => $time)
+                        <div class="flex justify-between items-center border-b border-[#E8D8CC] pb-2">
+                            <span class="font-semibold text-[#6B4F3A]">{{ $day }}</span>
+                            <span class="text-right">{{ $time['open'] }} - {{ $time['close'] }}</span>
+                        </div>
+                    @endforeach
 
-            @foreach($days as $day => $time)
-            
-
-                <div class="flex items-center gap-1 border-b border-[#E8D8CC] pb-2">
-                <!-- <div class="flex justify-between border-b border-[#E8D8CC] pb-2"> -->
-                    <span class="font-semibold text-[#6B4F3A]">{{ $day }}</span>
-                    <span>{{ $time['open'] }} - {{ $time['close'] }}</span>
                 </div>
-            @endforeach
+            </div>
         </div>
-    </div>
-</div>
-
     </div>
 </div>
 
