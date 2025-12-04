@@ -150,7 +150,13 @@
         href="{{ route('cafes.show', $cafe['id']) }}" 
         class="shadow rounded-xl overflow-hidden hover:shadow-lg transition bg-[#F9F8F6] dark:bg-gray-800"
     >
-        <img src="{{ $cafe['image'] ?? '/default.jpg' }}" class="w-full h-48 object-cover">
+        @php
+            $img = $cafe['image'] ?: '/images/logo.png';
+        @endphp
+
+        <img src="{{ $img }}" 
+            class="w-full h-48 object-cover"
+            onerror="this.onerror=null; this.src='/images/logo.png';">
 
         <div class="p-4">
             <h3 class="font-semibold text-lg text-black dark:text-white">

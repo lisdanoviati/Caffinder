@@ -4,13 +4,25 @@
 
 @section('content')
 
+@php
+    function fmtCoord($v) {
+        if (!$v) return '-';
+        return number_format($v, 5);
+    }
+@endphp
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {{-- Bagian Kiri --}}
     <div class="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
         @if($cafe['foto'])
-            <img src="{{ $cafe['foto'] }}" 
-                 class="w-full h-64 object-cover rounded-b-xl">
+            <img src="{{ $cafe['foto'] }}"
+                onerror="this.onerror=null; this.src='/images/logo.png';"
+                class="w-full h-64 object-cover rounded-b-xl">
+        @else
+            <div class="w-full h-64 flex items-center justify-center bg-gray-200 text-gray-600 text-lg font-semibold rounded-b-xl">
+                No Image
+            </div>
         @endif
 
         <div class="p-5 space-y-1">
@@ -63,26 +75,34 @@
 
             </div>
 
-<!-- menampilkan alamat café dari OpenStreetMap (OSM) jika data ada. -->
+            <!-- Bagian kiri -->
+            {{-- Alamat Resmi --}}
+            <p class="text-gray-700 font-semibold mt-3">Alamat Resmi:</p>
+            <p class="text-gray-800 leading-snug">
+                {{ $cafe['address'] ?? '-' }}
+            </p>
+
+            {{-- Alamat OSM (Informasi Tambahan) --}}
             @if(isset($cafe['osm']['display_name']))
-            <div class="p-4 pt-0">
-                <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <h3 class="font-semibold text-blue-700 mb-1">Alamat Resmi (OpenStreetMap)</h3>
-                    <p class="text-sm text-gray-700">{{ $cafe['osm']['display_name'] }}</p>
+                <div class="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <h3 class="font-semibold text-blue-700 mb-1 text-sm">
+                        Alamat berdasarkan koordinat (OSM)
+                    </h3>
+
+                    <p class="text-sm text-gray-700 leading-snug">
+                        {{ $cafe['osm']['display_name'] }}
+                    </p>
 
                     @if(isset($cafe['osm']['boundingbox']))
-                        <p class="mt-1 text-xs text-gray-600">
+                        <p class="mt-1 text-xs text-gray-500">
                             Bounding Box: {{ implode(', ', $cafe['osm']['boundingbox']) }}
                         </p>
                     @endif
                 </div>
-            </div>
-        @endif
-            <p class="text-gray-600">Kategori: 
-                <span class="font-semibold text-[#6B4F3A]">{{ $cafe['kategori'] ?? 'N/A' }}</span>
-            </p>
-           {{-- Telepon + Ikon Telp --}}
-            <p class="text-gray-600 flex items-center gap-2 mt-1">
+            @endif
+
+            {{-- Telepon --}}
+            <p class="text-gray-600 flex items-center gap-2 mt-3">
                 <svg class="w-5 h-5 text-[#6B4F3A]" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -92,23 +112,25 @@
             </p>
         </div>
 
-        {{-- Maps Static Image --}}
-        @if($cafe['latitude'] && $cafe['longitude'])
-        <div class="p-4">
-            <div class="rounded-xl overflow-hidden shadow-md">
-                <iframe
-                    width="100%"
-                    height="300"
-                    frameborder="0"
-                    style="border:0;"
-                    src="https://www.google.com/maps?q={{ $cafe['latitude'] }},{{ $cafe['longitude'] }}&output=embed"
-                    allowfullscreen>
-                </iframe>
-            </div>
-        </div>
-        @endif
-        
+            {{-- Map + Koordinat --}}
+            @if($cafe['latitude'] && $cafe['longitude'])
+                <div class="p-4">
+                    <div class="rounded-xl overflow-hidden shadow-md mb-2">
+                        <iframe
+                            width="100%"
+                            height="300"
+                            frameborder="0"
+                            style="border:0;"
+                            src="https://www.google.com/maps?q={{ $cafe['latitude'] }},{{ $cafe['longitude'] }}&output=embed"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
 
+                    <p class="text-sm text-gray-600">
+                        Koordinat: {{ fmtCoord($cafe['latitude']) }}, {{ fmtCoord($cafe['longitude']) }}
+                    </p>
+                </div>
+            @endif
 
     </div>
 
@@ -132,143 +154,76 @@
 
         <div class="grid grid-cols-2 gap-4 text-gray-700">
 
+            @php
+                function facilityBadge($val) {
+                    if ($val === true) {
+                        return '
+                            <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Ya
+                            </span>
+                        ';
+                    }
+
+                    if ($val === false) {
+                        return '
+                            <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                Tidak
+                            </span>
+                        ';
+                    }
+
+                    return '
+                        <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
+                            Tidak diketahui
+                        </span>
+                    ';
+                }
+            @endphp
+
             {{-- Fasilitas dengan badge --}}
             <p>
                 <b class="text-[#6B4F3A]">WiFi:</b>
-                @if($cafe['wifi'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {{-- centang --}}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        {{-- silang --}}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['wifi']) !!}
             </p>
 
             <p>
                 <b class="text-[#6B4F3A]">Ramah Laptop:</b>
-                @if($cafe['laptop'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['laptop']) !!}
             </p>
 
             <p>
                 <b class="text-[#6B4F3A]">Alcohol:</b>
-                @if($cafe['alcohol'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['alcohol']) !!}
             </p>
 
             <p>
                 <b class="text-[#6B4F3A]">Kursi Roda:</b>
-                @if($cafe['wheel'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['wheel']) !!}
             </p>
+
 
             <p>
                 <b class="text-[#6B4F3A]">Live Music:</b>
-                @if($cafe['live_music'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['live_music']) !!}
             </p>
 
             <p>
                 <b class="text-[#6B4F3A]">Pet Friendly:</b>
-                @if($cafe['pet_friendly'])
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Ya
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Tidak
-                    </span>
-                @endif
+                {!! facilityBadge($cafe['pet_friendly']) !!}
             </p>
 
             {{-- Harga --}}
-            <p><b class="text-[#6B4F3A]">Harga Min:</b> {{ $cafe['harga_min'] ?? '-' }}</p>
-            <p><b class="text-[#6B4F3A]">Harga Max:</b> {{ $cafe['harga_max'] ?? '-' }}</p>
+            <p><b class="text-[#6B4F3A]">Harga Min:</b> {{ number_format($cafe['harga_min'] ?? 0, 0, ',', '.') ? 'Rp ' . number_format($cafe['harga_min'], 0, ',', '.') : '-' }}</p>
+            <p><b class="text-[#6B4F3A]">Harga Max:</b> {{ number_format($cafe['harga_max'] ?? 0, 0, ',', '.') ? 'Rp ' . number_format($cafe['harga_max'], 0, ',', '.') : '-' }}</p>
 
             {{-- Lain-lain --}}
             <p><b class="text-[#6B4F3A]">Menu Rekomendasi:</b> {{ $cafe['bestmenu'] ?? '-' }}</p>
-            <p><b class="text-[#6B4F3A]">Latitude:</b> {{ $cafe['latitude'] }}</p>
-            <p><b class="text-[#6B4F3A]">Longitude:</b> {{ $cafe['longitude'] }}</p>
             
         </div>
 
@@ -276,35 +231,33 @@
        <div>
 
     <h3 class="text-xl font-semibold mb-4 text-[#4A2F21]">Jam Operasional</h3>
-            <div class="bg-[#FAF5F0] border border-[#E8D8CC] rounded-2xl p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10 text-gray-700">
 
-                    @php
-                        
-                        function formatTime($time) {
-                            if (!$time) return '--';
-                            return substr($time, 0, 5); // ambil HH:MM saja
-                        }
+        <div class="bg-[#FAF5F0] border border-[#E8D8CC] rounded-2xl p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6 text-gray-700">
 
-                        $days = [
-                            'Senin' => ['open' => formatTime($cafe['open_senin'] ?? null), 'close' => formatTime($cafe['close_senin'] ?? null)],
-                            'Selasa' => ['open' => formatTime($cafe['open_selasa'] ?? null), 'close' => formatTime($cafe['close_selasa'] ?? null)],
-                            'Rabu' => ['open' => formatTime($cafe['open_rabu'] ?? null), 'close' => formatTime($cafe['close_rabu'] ?? null)],
-                            'Kamis' => ['open' => formatTime($cafe['open_kamis'] ?? null), 'close' => formatTime($cafe['close_kamis'] ?? null)],
-                            'Jumat' => ['open' => formatTime($cafe['open_jumat'] ?? null), 'close' => formatTime($cafe['close_jumat'] ?? null)],
-                            'Sabtu' => ['open' => formatTime($cafe['open_sabtu'] ?? null), 'close' => formatTime($cafe['close_sabtu'] ?? null)],
-                            'Minggu' => ['open' => formatTime($cafe['open_minggu'] ?? null), 'close' => formatTime($cafe['close_minggu'] ?? null)],
-                        ];
-                    @endphp
+                @php
+                    function formatTime($time) {
+                        if (!$time) return '--';
+                        return substr($time, 0, 5);
+                    }
 
-                    @foreach($days as $day => $time)
-                        <div class="flex justify-between items-center border-b border-[#E8D8CC] pb-2">
-                            <span class="font-semibold text-[#6B4F3A]">{{ $day }}</span>
-                            <span class="text-right">{{ $time['open'] }} - {{ $time['close'] }}</span>
-                        </div>
-                    @endforeach
+                    $days = [
+                        'Senin' => ['open' => formatTime($cafe['open_senin'] ?? null), 'close' => formatTime($cafe['close_senin'] ?? null)],
+                        'Selasa' => ['open' => formatTime($cafe['open_selasa'] ?? null), 'close' => formatTime($cafe['close_selasa'] ?? null)],
+                        'Rabu' => ['open' => formatTime($cafe['open_rabu'] ?? null), 'close' => formatTime($cafe['close_rabu'] ?? null)],
+                        'Kamis' => ['open' => formatTime($cafe['open_kamis'] ?? null), 'close' => formatTime($cafe['close_kamis'] ?? null)],
+                        'Jumat' => ['open' => formatTime($cafe['open_jumat'] ?? null), 'close' => formatTime($cafe['close_jumat'] ?? null)],
+                        'Sabtu' => ['open' => formatTime($cafe['open_sabtu'] ?? null), 'close' => formatTime($cafe['close_sabtu'] ?? null)],
+                        'Minggu' => ['open' => formatTime($cafe['open_minggu'] ?? null), 'close' => formatTime($cafe['close_minggu'] ?? null)],
+                    ];
+                @endphp
 
-                </div>
+                @foreach($days as $day => $time)
+                    <div class="flex items-center justify-start space-x-4 py-1 border-b border-[#E8D8CC]">
+                        <span class="w-20 font-semibold text-[#6B4F3A]">{{ $day }}</span>
+                        <span>{{ $time['open'] }} - {{ $time['close'] }}</span>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

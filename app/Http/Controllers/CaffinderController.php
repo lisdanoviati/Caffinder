@@ -51,7 +51,7 @@ class CaffinderController extends Controller
         ]);
     }
 
-    public function show($id) //Bagian ini mengambil detail lengkap cafe
+    public function show($id)
     {
         $query = " 
         PREFIX caff: <http://www.semanticweb.org/lenovo/ontologies/2025/10/caffinder#>
@@ -160,30 +160,30 @@ class CaffinderController extends Controller
             'kategori'  => $this->simplifyKategori($get('kategori')),
             'foto'      => $get('foto'),
 
-            'wifi'         => filter_var($get('wifi'), FILTER_VALIDATE_BOOLEAN),
-            'alcohol'      => filter_var($get('alcohol'), FILTER_VALIDATE_BOOLEAN),
-            'laptop'       => filter_var($get('laptop'), FILTER_VALIDATE_BOOLEAN),
-            'wheel'        => filter_var($get('wheel'), FILTER_VALIDATE_BOOLEAN),
-            'live_music'   => filter_var($get('live_music'), FILTER_VALIDATE_BOOLEAN),
-            'pet_friendly' => filter_var($get('pet_friendly'), FILTER_VALIDATE_BOOLEAN),
+            'wifi'         => $get('wifi') === null ? null : filter_var($get('wifi'), FILTER_VALIDATE_BOOLEAN),
+            'alcohol'      => $get('alcohol') === null ? null : filter_var($get('alcohol'), FILTER_VALIDATE_BOOLEAN),
+            'laptop'       => $get('laptop') === null ? null : filter_var($get('laptop'), FILTER_VALIDATE_BOOLEAN),
+            'wheel'        => $get('wheel') === null ? null : filter_var($get('wheel'), FILTER_VALIDATE_BOOLEAN),
+            'live_music'   => $get('live_music') === null ? null : filter_var($get('live_music'), FILTER_VALIDATE_BOOLEAN),
+            'pet_friendly' => $get('pet_friendly') === null ? null : filter_var($get('pet_friendly'), FILTER_VALIDATE_BOOLEAN),
 
             'harga_min' => $get('harga_min'),
             'harga_max' => $get('harga_max'),
 
-            'open_senin'   => $get('open_senin'),
-            'close_senin'  => $get('close_senin'),
-            'open_selasa'  => $get('open_selasa'),
-            'close_selasa' => $get('close_selasa'),
-            'open_rabu'    => $get('open_rabu'),
-            'close_rabu'   => $get('close_rabu'),
-            'open_kamis'   => $get('open_kamis'),
-            'close_kamis'  => $get('close_kamis'),
-            'open_jumat'   => $get('open_jumat'),
-            'close_jumat'  => $get('close_jumat'),
-            'open_sabtu'   => $get('open_sabtu'),
-            'close_sabtu'  => $get('close_sabtu'),
-            'open_minggu'  => $get('open_minggu'),
-            'close_minggu' => $get('close_minggu'),
+            'open_senin'   => $this->formatTime($get('open_senin')),
+            'close_senin'  => $this->formatTime($get('close_senin')),
+            'open_selasa'  => $this->formatTime($get('open_selasa')),
+            'close_selasa' => $this->formatTime($get('close_selasa')),
+            'open_rabu'    => $this->formatTime($get('open_rabu')),
+            'close_rabu'   => $this->formatTime($get('close_rabu')),
+            'open_kamis'   => $this->formatTime($get('open_kamis')),
+            'close_kamis'  => $this->formatTime($get('close_kamis')),
+            'open_jumat'   => $this->formatTime($get('open_jumat')),
+            'close_jumat'  => $this->formatTime($get('close_jumat')),
+            'open_sabtu'   => $this->formatTime($get('open_sabtu')),
+            'close_sabtu'  => $this->formatTime($get('close_sabtu')),
+            'open_minggu'  => $this->formatTime($get('open_minggu')),
+            'close_minggu' => $this->formatTime($get('close_minggu')),
 
             'latitude'  => $get('latitude'),
             'longitude' => $get('longitude'),
@@ -193,26 +193,26 @@ class CaffinderController extends Controller
         ];
 
         // === INTEGRASI DATASET EKSTERNAL OSM (NOMINATIM) ===
-$lat = $cafe['latitude'];
-$lon = $cafe['longitude'];
+        $lat = $cafe['latitude'];
+        $lon = $cafe['longitude'];
 
-$osmResponse = Http::withHeaders([
-    'User-Agent' => 'CaffinderApp/1.0 (contact: example@gmail.com)'
-])->get("https://nominatim.openstreetmap.org/reverse", [
-    'lat' => $lat,
-    'lon' => $lon,
-    'format' => 'json',
-    'addressdetails' => 1,
-    'zoom' => 18,
-]);
+        $osmResponse = Http::withHeaders([
+            'User-Agent' => 'CaffinderApp/1.0 (contact: example@gmail.com)'
+        ])->get("https://nominatim.openstreetmap.org/reverse", [
+            'lat' => $lat,
+            'lon' => $lon,
+            'format' => 'json',
+            'addressdetails' => 1,
+            'zoom' => 18,
+        ]);
 
-$osmData = $osmResponse->json();   // <-- INI WAJIB ADA
+        $osmData = $osmResponse->json();   // <-- INI WAJIB ADA
 
-$cafe['osm'] = [
-    'display_name' => $osmData['display_name'] ?? null,
-    'address'      => $osmData['address'] ?? null,
-    'boundingbox'  => $osmData['boundingbox'] ?? null,
-];
+        $cafe['osm'] = [
+            'display_name' => $osmData['display_name'] ?? null,
+            'address'      => $osmData['address'] ?? null,
+            'boundingbox'  => $osmData['boundingbox'] ?? null,
+        ];
 
         // FIX: decode semua entity utk halaman detail
         $cafe = array_map(fn($v) => $this->deepDecode($v), $cafe);
@@ -281,5 +281,24 @@ $cafe['osm'] = [
             'query'      => $req->q,
             'categories' => $service->getCategories(),
         ]);
+    }
+
+    private function formatTime($time)
+    {
+        if (!$time) return null;
+
+        // normalisasi: ambil hanya bagian jam dan menit valid
+        $clean = preg_replace('/[^0-9:]/', '', $time); // buang karakter aneh
+
+        // tambahkan detik jika hilang
+        if (preg_match('/^\d{1,2}:\d{2}$/', $clean)) {
+            $clean .= ':00';
+        }
+
+        try {
+            return \Carbon\Carbon::createFromFormat('H:i:s', $clean)->format('H:i');
+        } catch (\Exception $e) {
+            return null; 
+        }
     }
 }
